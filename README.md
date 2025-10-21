@@ -15,65 +15,97 @@ A modern, real-time task management application with file attachment capabilitie
 - Secure authentication and authorization
 - Real-time notifications
 
-## 🚀 Getting Started
+### Backend
+- **Framework**: .NET Core 7.0+
+- **Database**: SQL Server 2019+
+- **Authentication**: JWT Bearer Tokens
+- **Real-time**: SignalR
+- **ORM**: Entity Framework Core
+
+### Frontend
+- **Framework**: Angular 15+
+- **UI Components**: Angular Material
+- **State Management**: RxJS
+- **HTTP Client**: Angular HttpClient
+- **Real-time**: @microsoft/signalr
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or later)
-- Angular CLI (v15 or later)
-- .NET Core SDK (for backend API)
-- SQL Server (or alternative database)
+- [.NET 7.0+ SDK](https://dotnet.microsoft.com/download)
+- [Node.js](https://nodejs.org/) (v16.x LTS or later)
+- [SQL Server 2019+](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (or SQL Server LocalDB)
+- [Angular CLI](https://angular.io/cli) (v15+)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/yourusername/taskattachment.client.git
-   cd taskattachment.client
+   cd TaskAttachment
    ```
 
-2. **Install dependencies**
+2. **Backend Setup**
    ```bash
+   cd TaskAttachment.Server
+   dotnet restore
+   dotnet ef database update
+   dotnet run
+   ```
+   > API will be available at: `https://localhost:5001`
+
+3. **Frontend Setup**
+   ```bash
+   cd ../taskattachment.client
    npm install
-   ```
-
-3. **Configure environment**
-   ```bash
-   cp src/environments/environment.example.ts src/environments/environment.ts
-   ```
-   Update the environment variables as needed.
-
-4. **Start the development server**
-   ```bash
    ng serve
    ```
-   The application will be available at `http://localhost:4200/`
+   > Application will be available at: `http://localhost:4200`
 
-## 🛠 Development
-
-### Project Structure
+## Project Structure
 
 ```
-src/
-├── app/
-│   ├── components/       # Reusable components
-│   ├── services/         # Application services
-│   ├── models/           # TypeScript interfaces and models
-│   ├── guards/           # Route guards
-│   ├── interceptors/     # HTTP interceptors
-│   └── app.module.ts     # Root module
-├── assets/              # Static assets
-└── environments/        # Environment configurations
+TaskAttachment/
+├── TaskAttachment.Server/     # .NET Core Web API
+│   ├── Controllers/          # API endpoints
+│   ├── Data/                 # Database context & migrations
+│   ├── DTOs/                 # Data transfer objects
+│   ├── Hubs/                 # SignalR hubs
+│   ├── Models/               # Domain models
+│   └── Repositories/         # Data access layer
+│
+└── taskattachment.client/    # Angular frontend
+    ├── src/
+    │   ├── app/
+    │   │   ├── components/   # Reusable UI components
+    │   │   ├── services/     # API services
+    │   │   ├── models/       # TypeScript interfaces
+    │   │   ├── guards/       # Route guards
+    │   │   └── interceptors/ # HTTP interceptors
+    │   ├── assets/           # Static files
+    │   └── environments/     # Environment configs
+    └── angular.json          # Angular config
 ```
+
+## Development
 
 ### Available Scripts
 
-- `ng serve` - Start development server
-- `ng build` - Build for production
-- `ng test` - Run unit tests
-- `ng e2e` - Run end-to-end tests
-- `ng lint` - Run linting
+#### Backend
+```bash
+dotnet build      # Build the solution
+dotnet test       # Run tests
+dotnet watch run  # Run with hot-reload
+```
 
+#### Frontend
+```bash
+ng serve          # Start development server
+ng build         # Build for production
+g test           # Run unit tests
+g e2e            # Run end-to-end tests
+```
 ## 📦 Dependencies
 
 ### Main Dependencies
