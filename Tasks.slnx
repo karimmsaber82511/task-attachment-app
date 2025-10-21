@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="TaskAttachment/taskattachment.client/taskattachment.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="TaskAttachment/TaskAttachment.Server/TaskAttachment.Server.csproj" Id="7eb542a6-9ad5-4266-90d7-998ca00fbdd2" />
+</Solution>
