@@ -1,0 +1,132 @@
+<div class="chat-container">
+  <!-- Username Setup Screen -->
+  <div class="username-setup" *ngIf="!isUsernameSet">
+    <div class="username-card">
+      <h1>Welcome to Real-Time Chat</h1>
+      <p>Please enter your username to start chatting</p>
+      <div class="username-input-group">
+        <input
+          type="text"
+          [(ngModel)]="username"
+          placeholder="Enter your username"
+          (keypress)="username.trim() && $event.key === 'Enter' ? setUsername() : null"
+          maxlength="50"
+          class="username-input"
+        />
+        <button (click)="setUsername()" [disabled]="!username.trim()" class="btn-primary">
+          Join Chat
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Interface -->
+  <div class="chat-interface" *ngIf="isUsernameSet">
+    <!-- Header -->
+    <div class="chat-header">
+      <h2>Real-Time Chat</h2>
+      <div class="user-info">
+        <span class="username-badge">{{ username }}</span>
+        <span class="connection-status" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+          {{ isConnected ? '● Connected' : '○ Disconnected' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+      <div *ngIf="messages.length === 0" class="no-messages">
+        <p>No messages yet. Start the conversation!</p>
+      </div>
+
+      <div *ngFor="let message of messages" 
+           class="message-wrapper"
+           [class.own-message]="isMessageFromCurrentUser(message)"
+           [class.other-message]="!isMessageFromCurrentUser(message)">
+        <div class="message-bubble">
+          <div class="message-header">
+            <span class="message-username">{{ message.senderUsername }}</span>
+            <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+          </div>
+          <div class="message-content">
+          <div class="message-text">{{ message.content }}</div>
+          <div class="message-attachments" *ngIf="message.attachments?.length">
+            <div class="attachment" *ngFor="let att of message.attachments">
+              <ng-container *ngIf="att.type.startsWith('image/')">
+                <img [src]="att.url" [alt]="att.name" class="attachment-image" (click)="previewImage(att)">
+              </ng-container>
+              <ng-container *ngIf="att.type === 'application/pdf'">
+                <a [href]="att.url" target="_blank" class="attachment-link">
+                  <span class="material-icons">picture_as_pdf</span>
+                  <span>{{ att.name }}</span>
+                </a>
+              </ng-container>
+              <ng-container *ngIf="!att.type.startsWith('image/') && att.type !== 'application/pdf'">
+                <a [href]="att.url" target="_blank" class="attachment-link">
+                  <span class="material-icons">insert_drive_file</span>
+                  <span>{{ att.name }}</span>
+                </a>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="message-input-container">
+      <div class="input-wrapper">
+        <div class="file-upload-container">
+          <button type="button" class="btn-attach" (click)="fileInput.click()" title="Attach file">
+            <span class="material-icons">attach_file</span>
+          </button>
+          <input #fileInput type="file" multiple style="display: none" (change)="onFileSelected($event)">
+          
+          <div class="file-previews" *ngIf="attachments.length > 0">
+            <div class="file-preview" *ngFor="let file of attachments; let i = index">
+              <div class="file-icon">
+                <span class="material-icons">{{ getFileIcon(file.type) }}</span>
+              </div>
+              <div class="file-info">
+                <div class="file-name">{{ file.name }}</div>
+                <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                <div class="progress-bar" *ngIf="file.progress < 100">
+                  <div class="progress" [style.width.%]="file.progress"></div>
+                </div>
+              </div>
+              <button type="button" class="btn-remove" (click)="removeFile(i)" title="Remove file">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="message-input-group">
+            <textarea
+              [(ngModel)]="newMessage"
+              placeholder="Type your message... (Max 150 characters)"
+              (keypress)="onKeyPress($event)"
+              [maxlength]="maxMessageLength"
+              class="message-input"
+              rows="2"
+            ></textarea>
+            <div class="input-footer">
+              <span class="char-counter" [class.limit-warning]="getRemainingChars() < 20">
+                {{ getRemainingChars() }} / {{ maxMessageLength }} characters remaining
+              </span>
+              <button 
+                (click)="sendMessage()" 
+                [disabled]="(!newMessage.trim() && attachments.length === 0) || !isConnected"
+                class="btn-send">
+                {{ isUploading ? 'Sending...' : 'Send' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Router Outlet for child routes -->
+<router-outlet></router-outlet>
